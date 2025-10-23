@@ -34,6 +34,10 @@ void printGame(vector<vector<int>> game, int gameRange) {
             if (game.at(j).at(i) == 1) {
                 cout << "A" << " ";
             }
+            if (game.at(j).at(i) == 2) {
+                cout << "/" << " ";
+            }
+            // cout << game.at(j).at(i) << " ";
         }
         cout << endl;
     }
@@ -62,10 +66,12 @@ vector<vector<int>> moveD(vector<vector<int>> game, array<int, 2> position,int g
         game.at(position[0]).at(position[1]) = 0;
         game.at(position[0]).at(0) = 1;
         return game;
-    } else {
-        game.at(position[0]).at(position[1]) = 0;
-        game.at(position[0]).at(position[1] + 1) = 1;
     }
+    if (game.at(position[0]).at(position[1] + 1) == 2) {
+        return game;
+    }
+    game.at(position[0]).at(position[1]) = 0;
+    game.at(position[0]).at(position[1] + 1) = 1;
     return game;
 }
 
@@ -74,10 +80,12 @@ vector<vector<int>> moveA(vector<vector<int>> game, array<int, 2> position,int g
         game.at(position[0]).at(position[1]) = 0;
         game.at(position[0]).at(gameRange - 1) = 1;
         return game;
-    } else {
-        game.at(position[0]).at(position[1]) = 0;
-        game.at(position[0]).at(position[1] - 1) = 1;
     }
+        if (game.at(position[0]).at(position[1] - 1) == 2) {
+        return game;
+    }
+    game.at(position[0]).at(position[1]) = 0;
+    game.at(position[0]).at(position[1] - 1) = 1;
     return game;
 }
 
@@ -86,10 +94,12 @@ vector<vector<int>> moveW(vector<vector<int>> game, array<int, 2> position,int g
         game.at(position[0]).at(position[1]) = 0;
         game.at(gameRange - 1).at(position[1]) = 1;
         return game;
-    } else {
-        game.at(position[0]).at(position[1]) = 0;
-        game.at(position[0] - 1).at(position[1]) = 1;
     }
+    if (game.at(position[0] - 1).at(position[1]) == 2) {
+        return game;
+    }
+    game.at(position[0]).at(position[1]) = 0;
+    game.at(position[0] - 1).at(position[1]) = 1;
     return game;
 }
 
@@ -98,14 +108,58 @@ vector<vector<int>> moveS(vector<vector<int>> game, array<int, 2> position,int g
         game.at(position[0]).at(position[1]) = 0;
         game.at(0).at(position[1]) = 1;
         return game;
-    } else {
-        game.at(position[0]).at(position[1]) = 0;
-        game.at(position[0] + 1).at(position[1]) = 1;
+    }
+    if (game.at(position[0] + 1).at(position[1]) == 2) {
+        return game;
+    }
+    game.at(position[0]).at(position[1]) = 0;
+    game.at(position[0] + 1).at(position[1]) = 1;
+    return game;
+}
+
+vector<vector<int>> draw(vector<vector<int>> game, array<int, 2> position, char preMv, int gameRange) {
+    switch (preMv) {
+        case 'd':
+            if (position[1] == gameRange - 1) {
+                game.at(position[0]).at(position[1]) = 2;
+                game.at(position[0]).at(0) = 1;
+            } else {
+                game.at(position[0]).at(position[1]) = 2;
+                game.at(position[0]).at(position[1] + 1) = 1;
+            }
+            break;
+        case 'a':
+            if (position[1] == 0) {
+                game.at(position[0]).at(position[1]) = 2;
+                game.at(position[0]).at(gameRange - 1) = 1;
+            } else {
+                game.at(position[0]).at(position[1]) = 2;
+                game.at(position[0]).at(position[1] - 1) = 1;
+            }
+            break;
+        case 'w':
+            if (position[0] == 0) {
+                game.at(position[0]).at(position[1]) = 2;
+                game.at(gameRange - 1).at(position[1]) = 1;
+            } else {
+                game.at(position[0]).at(position[1]) = 2;
+                game.at(position[0] - 1).at(position[1]) = 1;
+            }
+            break;
+        case 's':
+            if (position[0] == gameRange - 1) {
+                game.at(position[0]).at(position[1]) = 2;
+                game.at(0).at(position[1]) = 1;
+            } else {
+                game.at(position[0]).at(position[1]) = 2;
+                game.at(position[0] + 1).at(position[1]) = 1;
+            }
+            break;
     }
     return game;
 }
 
-vector<vector<int>> moveP(vector<vector<int>> game, array<int, 2> position,int gameRange, char mv) {
+vector<vector<int>> functionality(vector<vector<int>> game, array<int, 2> position,int gameRange, char mv, char preMv) {
     switch (mv) {
         case 'd':
             game = moveD(game, position, gameRange);
@@ -119,6 +173,9 @@ vector<vector<int>> moveP(vector<vector<int>> game, array<int, 2> position,int g
         case 's': 
             game = moveS(game, position, gameRange);
             break;
+        case ' ':
+            game = draw(game, position, preMv, gameRange);
+            break;
     }
     return game;
 }
@@ -128,7 +185,7 @@ int main(void) {
     int gameRange = 10;
     vector<vector<int>> game {};
     array<int, 2> position {};
-    char mv;
+    char mv {}, preMv {};
     string start;
 
     cout << "Type \"start\" and press enter to start: ";
@@ -140,11 +197,12 @@ int main(void) {
         game.at(randomPosition(position, gameRange)[0]).at(randomPosition(position, gameRange)[1]) = 1;
 
         while (true) {
+            system("cls");
             cout << "Pres 'q' to quit" << endl;
             printGame(game, gameRange);
             mv = _getch();
-            game = moveP(game, findPosition(game, position, gameRange), gameRange, mv);
-            system("cls");
+            preMv = (mv != ' ') ? mv : preMv;
+            game = functionality(game, findPosition(game, position, gameRange), gameRange, mv, preMv);
             if (mv == 'q') {break;}
         }
 
