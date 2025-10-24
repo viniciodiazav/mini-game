@@ -63,9 +63,13 @@ array<int, 2> findPosition(vector<vector<int>> game, array<int, 2> position, int
 
 vector<vector<int>> moveD(vector<vector<int>> game, array<int, 2> position,int gameRange) {
     if (position[1] == gameRange - 1) {
-        game.at(position[0]).at(position[1]) = 0;
-        game.at(position[0]).at(0) = 1;
-        return game;
+        if (game.at(position[0]).at(0) == 0) {
+            game.at(position[0]).at(position[1]) = 0;
+            game.at(position[0]).at(0) = 1;
+            return game;
+        } else {
+            return game;
+        }
     }
     if (game.at(position[0]).at(position[1] + 1) == 2) {
         return game;
@@ -77,9 +81,13 @@ vector<vector<int>> moveD(vector<vector<int>> game, array<int, 2> position,int g
 
 vector<vector<int>> moveA(vector<vector<int>> game, array<int, 2> position,int gameRange) {
     if (position[1] == 0) {
-        game.at(position[0]).at(position[1]) = 0;
-        game.at(position[0]).at(gameRange - 1) = 1;
-        return game;
+        if (game.at(position[0]).at(gameRange - 1) == 0) {
+            game.at(position[0]).at(position[1]) = 0;
+            game.at(position[0]).at(gameRange - 1) = 1;
+            return game;
+        } else {
+            return game;
+        }
     }
         if (game.at(position[0]).at(position[1] - 1) == 2) {
         return game;
@@ -91,9 +99,13 @@ vector<vector<int>> moveA(vector<vector<int>> game, array<int, 2> position,int g
 
 vector<vector<int>> moveW(vector<vector<int>> game, array<int, 2> position,int gameRange) {
     if (position[0] == 0) {
-        game.at(position[0]).at(position[1]) = 0;
-        game.at(gameRange - 1).at(position[1]) = 1;
-        return game;
+        if (game.at(gameRange - 1).at(position[1]) == 0) {
+            game.at(position[0]).at(position[1]) = 0;
+            game.at(gameRange - 1).at(position[1]) = 1;
+            return game;
+        } else {
+            return game;
+        }
     }
     if (game.at(position[0] - 1).at(position[1]) == 2) {
         return game;
@@ -105,9 +117,13 @@ vector<vector<int>> moveW(vector<vector<int>> game, array<int, 2> position,int g
 
 vector<vector<int>> moveS(vector<vector<int>> game, array<int, 2> position,int gameRange) {
     if (position[0] == gameRange - 1) {
-        game.at(position[0]).at(position[1]) = 0;
-        game.at(0).at(position[1]) = 1;
-        return game;
+        if ((game.at(0).at(position[1]) == 0)) {
+            game.at(position[0]).at(position[1]) = 0;
+            game.at(0).at(position[1]) = 1;
+            return game;
+        } else {
+            return game;
+        }
     }
     if (game.at(position[0] + 1).at(position[1]) == 2) {
         return game;
@@ -182,10 +198,10 @@ vector<vector<int>> functionality(vector<vector<int>> game, array<int, 2> positi
 
 int main(void) {
 
-    int gameRange = 10;
+    int gameRange = 5;
     vector<vector<int>> game {};
     array<int, 2> position {};
-    char mv {}, preMv {};
+    char mv {}, preMv {'d'};
     string start;
 
     cout << "Type \"start\" and press enter to start: ";
